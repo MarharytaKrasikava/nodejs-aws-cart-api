@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import * as cdk from 'aws-cdk-lib';
 
 import { AppController } from './app.controller';
 import { CartModule } from './cart/cart.module';
@@ -24,12 +23,9 @@ dotenv.config();
       useFactory: async () => {
         console.log('Setting up database connection...');
         try {
-          const bdConfing = new DatabaseConfig();
-          const dbCredentials = await bdConfing.getDatabaseConfig();
-          // const host =
-          //   process.env.NODE_ENV === 'AWS_LAMBDA'
-          //     ? cdk.Fn.importValue(process.env.DB_ENDPOINT_VALUE)
-          //     : process.env.DB_HOST || 'localhost';
+          const dbConfig = new DatabaseConfig();
+          const dbCredentials = await dbConfig.getDatabaseConfig();
+          console.log(dbCredentials);
           return {
             type: 'postgres',
             host:

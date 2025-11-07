@@ -1,8 +1,17 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { CartEntity } from './cart.entity';
 
 @Entity('cart_items')
 export class CartItemEntity {
+  @PrimaryGeneratedColumn()
+  id: string;
+
   @Column({ name: 'product_id', nullable: false })
   productId: string;
 
