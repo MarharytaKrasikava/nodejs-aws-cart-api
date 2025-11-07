@@ -15,8 +15,9 @@ import { Order, OrderService } from '../order';
 import { AppRequest, getUserIdFromRequest } from '../shared';
 import { calculateCartTotal } from './models-rules';
 import { CartService } from './services';
-import { CartItem } from './models';
-import { CreateOrderDto, PutCartPayload } from 'src/order/type';
+// import { CartItem } from './models';
+import { CreateOrderDto /* , PutCartPayload  */ } from 'src/order/type';
+import { CartItemEntity } from './DB/cart-item.entity';
 
 @Controller('api/profile/cart')
 export class CartController {
@@ -28,8 +29,8 @@ export class CartController {
   // @UseGuards(JwtAuthGuard)
   @UseGuards(BasicAuthGuard)
   @Get()
-  findUserCart(@Req() req: AppRequest): CartItem[] {
-    const cart = this.cartService.findOrCreateByUserId(
+  async findUserCart(@Req() req: AppRequest): Promise<CartItemEntity[]> {
+    const cart = await this.cartService.findOrCreateByUserId(
       getUserIdFromRequest(req),
     );
 
@@ -39,12 +40,12 @@ export class CartController {
   // @UseGuards(JwtAuthGuard)
   @UseGuards(BasicAuthGuard)
   @Put()
-  updateUserCart(
+  async updateUserCart(
     @Req() req: AppRequest,
-    @Body() body: PutCartPayload,
-  ): CartItem[] {
+    @Body() body: { product: CartItemEntity; count: number },
+  ): Promise<CartItemEntity[]> {
     // TODO: validate body payload...
-    const cart = this.cartService.updateByUserId(
+    const cart = await this.cartService.updateByUserId(
       getUserIdFromRequest(req),
       body,
     );
@@ -63,9 +64,9 @@ export class CartController {
   // @UseGuards(JwtAuthGuard)
   @UseGuards(BasicAuthGuard)
   @Put('order')
-  checkout(@Req() req: AppRequest, @Body() body: CreateOrderDto) {
+  async checkout(@Req() req: AppRequest, @Body() body: CreateOrderDto) {
     const userId = getUserIdFromRequest(req);
-    const cart = this.cartService.findByUserId(userId);
+    const cart = await this.cartService.findByUserId(userId);
 
     if (!(cart && cart.items.length)) {
       throw new BadRequestException('Cart is empty');
@@ -76,8 +77,8 @@ export class CartController {
     const order = this.orderService.create({
       userId,
       cartId,
-      items: items.map(({ product, count }) => ({
-        productId: product.id,
+      items: items.map(({ productId, count }) => ({
+        productId,
         count,
       })),
       address: body.address,
