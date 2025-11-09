@@ -25,7 +25,7 @@ dotenv.config();
         try {
           const dbConfig = new DatabaseConfig();
           const dbCredentials = await dbConfig.getDatabaseConfig();
-          console.log(dbCredentials);
+          // console.log(dbCredentials);
           return {
             type: 'postgres',
             host:
@@ -38,13 +38,13 @@ dotenv.config();
             database: dbCredentials.dbname,
             synchronize: process.env.NODE_ENV !== 'AWS_LAMBDA',
             entities: [CartEntity, CartItemEntity],
-            logging: process.env.NODE_ENV !== 'AWS_LAMBDA',
+            logging: true,
             retryAttempts: 3,
             retryDelay: 3000,
-            ssl: process.env.NODE_ENV === 'AWS_LAMBDA' ? true : false,
+            ssl: false,
             extra: {
               max: 20, // connection pool size
-              connectionTimeoutMillis: 5000,
+              connectionTimeoutMillis: 30000,
             },
           };
         } catch (error) {

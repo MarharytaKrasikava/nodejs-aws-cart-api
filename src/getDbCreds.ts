@@ -24,7 +24,7 @@ export class DatabaseConfig {
   async getDatabaseConfig(): Promise<any> {
     try {
       const response = await this.secretsManager.getSecretValue({
-        SecretId: process.env.DB_CREDS_NAME,
+        SecretId: process.env.DB_SECRET_NAME,
       });
 
       if (!response.SecretString) {
