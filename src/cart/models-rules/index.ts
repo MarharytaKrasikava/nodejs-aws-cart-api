@@ -1,4 +1,3 @@
-// import { CartItem } from '../models';
 import { CartItemEntity } from '../DB/cart-item.entity';
 
 export function calculateCartTotal(items: CartItemEntity[]): number {

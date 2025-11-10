@@ -53,12 +53,25 @@ export class CartController {
     return cart.items;
   }
 
+  @UseGuards(BasicAuthGuard)
+  @Get('total')
+  async findUserCartTotal(@Req() req: AppRequest): Promise<string> {
+    const userId = getUserIdFromRequest(req);
+    const cart = await this.cartService.findOrCreateByUserId(userId);
+
+    return `Total price: ${calculateCartTotal(cart.items)}, default item price is 20`;
+  }
+
   // @UseGuards(JwtAuthGuard)
   @UseGuards(BasicAuthGuard)
   @Delete()
   @HttpCode(HttpStatus.OK)
-  async clearUserCart(@Req() req: AppRequest) {
-    const userId = getUserIdFromRequest(req);
+  async clearUserCart(
+    @Req() req: AppRequest,
+    @Body() body: { userId: string },
+  ) {
+    const userId = body.userId || getUserIdFromRequest(req);
+    console.log('body.userId:', body.userId, 'userId:', userId);
 
     await this.cartService.removeByUserId(userId);
   }
