@@ -21,8 +21,9 @@ export class CartEntity {
   status: CartStatus;
 
   @OneToMany(() => CartItemEntity, (item) => item.cart, {
-    cascade: true,
+    cascade: ['insert', 'update', 'remove'],
     eager: true,
+    onDelete: 'CASCADE',
   })
   items: CartItemEntity[];
 }
