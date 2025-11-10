@@ -19,8 +19,8 @@ export class CartService {
   }
 
   async createByUserId(userId: string): Promise<CartEntity> {
-    const userCart = this.cartRepository.create({ userId, items: [] });
-    this.cartRepository.save(userCart);
+    const userCart = await this.cartRepository.create({ userId, items: [] });
+    await this.cartRepository.save(userCart);
     return userCart;
     // const timestamp = Date.now();
 
@@ -42,9 +42,11 @@ export class CartService {
     const userCart = await this.findByUserId(userId);
 
     if (userCart) {
+      console.log('Found existing cart for user:', userId);
       return userCart;
     }
 
+    console.log('Creating new cart for user:', userId);
     return this.createByUserId(userId);
   }
 
@@ -56,6 +58,7 @@ export class CartService {
     const index = userCart.items.findIndex(
       (item) => item.productId === payload.product.productId,
     );
+    console.log('Updating cart for user:', userId, 'with payload:', payload);
 
     if (index === -1) {
       userCart.items.push(payload.product);
@@ -65,7 +68,7 @@ export class CartService {
       userCart.items[index] = payload.product;
     }
 
-    return userCart;
+    return await this.cartRepository.save(userCart);
   }
 
   async removeByUserId(userId: string): Promise<void> {
