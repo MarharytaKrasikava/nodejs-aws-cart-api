@@ -22,20 +22,6 @@ export class CartService {
     const userCart = await this.cartRepository.create({ userId, items: [] });
     await this.cartRepository.save(userCart);
     return userCart;
-    // const timestamp = Date.now();
-
-    // const userCart = {
-    //   id: randomUUID(),
-    //   user_id,
-    //   created_at: timestamp,
-    //   updated_at: timestamp,
-    //   status: CartStatuses.OPEN,
-    //   items: [],
-    // };
-
-    // this.userCarts[user_id] = userCart;
-
-    // return userCart;
   }
 
   async findOrCreateByUserId(userId: string): Promise<CartEntity> {
